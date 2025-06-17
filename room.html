@@ -69,12 +69,16 @@
 </head>
 <body>
   <div class="room-info">♣ 进入房间 <span id="room-id"></span></div>
+
   <div class="controls">
     💰 下注金额：<input type="number" id="bet-amount" min="1" placeholder="10" />
     <button onclick="placeBet()">下注</button>
     <button onclick="dealCards()">开始发牌</button>
     <button onclick="resetGame()">重新发牌</button>
+    <button onclick="playerHit()">🃏 要牌</button>
+    <button onclick="playerStand()">✋ 停牌</button>
   </div>
+
   <div id="game-area"></div>
 
   <script src="script.js"></script>
@@ -82,19 +86,6 @@
     const urlParams = new URLSearchParams(window.location.search);
     const roomId = urlParams.get('room') || '未知';
     document.getElementById("room-id").textContent = roomId;
-
-    function placeBet() {
-      const amount = document.getElementById("bet-amount").value;
-      alert("你下注了：" + (amount || "0") + " 元！");
-    }
-
-    function dealCards() {
-      initBlackjack(roomId);
-    }
-
-    function resetGame() {
-      document.getElementById("game-area").innerHTML = "";
-    }
   </script>
 </body>
 </html>
