@@ -13,8 +13,7 @@ function drawCard() {
 
 function getCardValue(filename) {
   const name = filename.split("/").pop().replace(".png", "");
-  const rank = name.slice(0, -1); // 去掉花色部分
-
+  const rank = name.slice(0, -1);
   if (["J", "Q", "K"].includes(rank)) return 10;
   if (rank === "A") return 11;
   return parseInt(rank);
@@ -23,19 +22,15 @@ function getCardValue(filename) {
 function calculatePoints(cards) {
   let total = 0;
   let aceCount = 0;
-
   cards.forEach(card => {
     const val = getCardValue(card);
     total += val;
     if (val === 11) aceCount++;
   });
-
-  // 如果超过21点，尝试将 A 从11变成1
   while (total > 21 && aceCount > 0) {
     total -= 10;
     aceCount--;
   }
-
   return total;
 }
 
@@ -80,8 +75,7 @@ function dealCards() {
 }
 
 function resetGame() {
-  const gameArea = document.getElementById("game-area");
-  gameArea.innerHTML = "";
+  document.getElementById("game-area").innerHTML = "";
   playerCards = [];
   dealerCards = [];
 }
@@ -93,7 +87,6 @@ function playerHit() {
   }
   playerCards.push(drawCard());
   renderCards();
-
   const points = calculatePoints(playerCards);
   if (points > 21) {
     alert(`你的点数是 ${points}，爆牌！你输了 😢`);
@@ -102,17 +95,13 @@ function playerHit() {
 
 function playerStand() {
   const playerPoints = calculatePoints(playerCards);
-
-  // 庄家规则：小于17点必须补牌
   let dealerPoints = calculatePoints(dealerCards);
   while (dealerPoints < 17) {
     dealerCards.push(drawCard());
     dealerPoints = calculatePoints(dealerCards);
   }
-
   renderCards();
 
-  // 胜负判定
   if (playerPoints > 21) {
     alert(`你爆牌了 (${playerPoints})，你输了 😢`);
   } else if (dealerPoints > 21) {
