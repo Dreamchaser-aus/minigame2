@@ -2,16 +2,46 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Blackjack Lobby</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blackjack 房间大厅</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #0b1e2d;
+      color: white;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 { margin-bottom: 20px; }
+    .room-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+    .room {
+      background: #122c42;
+      border: 2px solid #00c3ff;
+      padding: 30px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .room:hover {
+      transform: scale(1.05);
+      background: #164563;
+    }
+  </style>
 </head>
 <body>
-  <h1>🎲 Blackjack Lobby</h1>
-  <div id="lobby">
-    <button onclick="enterRoom(1)">Enter Room 1</button>
-    <button onclick="enterRoom(2)">Enter Room 2</button>
-    <button onclick="enterRoom(3)">Enter Room 3</button>
+  <h1>🎲 选择一个 Blackjack 房间</h1>
+  <div class="room-list">
+    <div class="room" onclick="enterRoom(1)">房间 1</div>
+    <div class="room" onclick="enterRoom(2)">房间 2</div>
+    <div class="room" onclick="enterRoom(3)">房间 3</div>
   </div>
+
   <script>
     function enterRoom(id) {
       window.location.href = `room.html?room=${id}`;
