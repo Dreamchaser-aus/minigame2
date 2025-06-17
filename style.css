@@ -6,7 +6,7 @@ body {
   padding: 20px;
 }
 h1 { margin-top: 0; }
-#game-area {
+#game-area, #lobby {
   max-width: 600px;
   margin: auto;
   background: #123;
