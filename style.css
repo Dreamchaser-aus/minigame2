@@ -1,0 +1,42 @@
+body {
+  background: #0b2c3a;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+h1 { margin-top: 0; }
+#game-area {
+  max-width: 600px;
+  margin: auto;
+  background: #123;
+  padding: 20px;
+  border-radius: 10px;
+}
+.cards {
+  margin: 10px 0;
+}
+.card {
+  display: inline-block;
+  width: 50px;
+  height: 70px;
+  background: #fff;
+  color: #000;
+  line-height: 70px;
+  font-weight: bold;
+  border-radius: 5px;
+  margin: 5px;
+}
+button {
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  background: #1abc9c;
+  color: white;
+  cursor: pointer;
+}
+#bet-section {
+  margin: 10px 0;
+}
