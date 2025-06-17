@@ -1,33 +1,23 @@
-const cardImages = {
-  "AS": "cards/AS.png",
-  "10D": "cards/10D.png",
-  "7S": "cards/7S.png",
-  "KH": "cards/KH.png",
-  "2C": "cards/2C.png",
-  "3H": "cards/3H.png"
-};
+function initBlackjack(roomId) {
+  const gameArea = document.getElementById("game-area");
+  gameArea.innerHTML = "";
 
-function setCard(id, code) {
-  const el = document.getElementById(id);
-  el.style.backgroundImage = `url('${cardImages[code]}')`;
+  const cards = [
+    "cards/AS.png", "cards/KD.png", "cards/5H.png", "cards/9C.png"
+  ];
+
+  cards.forEach((src, index) => {
+    const img = document.createElement("img");
+    img.src = src;
+    img.className = "card";
+    img.style.zIndex = 10 + index;
+    gameArea.appendChild(img);
+
+    setTimeout(() => {
+      const offsetX = (index % 2 === 0 ? -1 : 1) * (100 + index * 10);
+      const offsetY = index < 2 ? -100 : 100;
+      img.style.left = `calc(50% + ${offsetX}px)`;
+      img.style.top = `calc(50% + ${offsetY}px)`;
+    }, 200 + index * 300);
+  });
 }
-
-function startGame() {
-  setCard("dealer-card1", "7S");
-  setCard("dealer-card2", "back"); // 可以做背面图
-
-  setCard("player-card1", "AS");
-  setCard("player-card2", "10D");
-
-  document.getElementById("bet").innerText = "10";
-  document.getElementById("balance").innerText = "100";
-}
-
-function hit() {
-  alert("Hit pressed (demo)");
-}
-function stand() {
-  alert("Stand pressed (demo)");
-}
-
-window.onload = startGame;
