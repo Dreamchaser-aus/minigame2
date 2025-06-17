@@ -2,33 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Blackjack Room</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blackjack 房间</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      margin: 0;
+      background-image: url('table.jpg'); /* 你可以替换成真实桌面背景图 */
+      background-size: cover;
+      background-position: center;
+      font-family: Arial, sans-serif;
+      color: white;
+    }
+    .room-info {
+      text-align: center;
+      padding: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      background: rgba(0, 0, 0, 0.6);
+    }
+    #game-area {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 70vh;
+      position: relative;
+    }
+    .card {
+      width: 80px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition: transform 0.5s ease, top 0.5s ease, left 0.5s ease;
+    }
+  </style>
 </head>
 <body>
-  <div id="table">
-    <h2 id="room-title">Room</h2>
-    <div class="dealer-area">
-      <div class="card" id="dealer-card1"></div>
-      <div class="card" id="dealer-card2"></div>
-    </div>
-    <div class="player-area">
-      <div class="card" id="player-card1"></div>
-      <div class="card" id="player-card2"></div>
-    </div>
-    <div class="info-panel">
-      <p>Bet: $<span id="bet">10</span> | Balance: $<span id="balance">100</span></p>
-      <button onclick="hit()">Hit</button>
-      <button onclick="stand()">Stand</button>
-      <button onclick="startGame()">Restart</button>
-    </div>
-  </div>
-
+  <div class="room-info">♣ 进入房间 <span id="room-id"></span></div>
+  <div id="game-area"></div>
   <script src="script.js"></script>
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const roomId = params.get('room');
-    document.getElementById("room-title").innerText = `Blackjack - Room ${roomId}`;
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomId = urlParams.get('room') || '未知';
+    document.getElementById('room-id').textContent = roomId;
+
+    // 初始化发牌（可选自动执行或添加按钮触发）
+    window.onload = () => {
+      initBlackjack(roomId);
+    };
   </script>
 </body>
 </html>
