@@ -1,0 +1,59 @@
+body {
+  background: #263238;
+  color: #fff;
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  margin: 20px;
+}
+
+#table {
+  background: radial-gradient(circle, #388e3c, #1b5e20);
+  border: 12px solid #5d4037;
+  border-radius: 40px;
+  width: 90%;
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.card {
+  width: 70px;
+  height: 100px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: inline-block;
+  margin: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  animation: deal 0.5s ease-out forwards;
+}
+
+@keyframes deal {
+  0% { transform: translateY(-20px) scale(0.8); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.dealer-area, .player-area {
+  margin: 20px 0;
+}
+
+.info-panel {
+  margin-top: 20px;
+}
+
+button {
+  margin: 10px;
+  padding: 10px 20px;
+  background-color: #00c853;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
