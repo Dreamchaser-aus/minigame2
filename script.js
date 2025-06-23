@@ -1,9 +1,15 @@
-
-const allCardImages = ['cards/AC.png', 'cards/2C.png', 'cards/3C.png', 'cards/4C.png', 'cards/5C.png', 'cards/6C.png', 'cards/7C.png', 'cards/8C.png', 'cards/9C.png', 'cards/10C.png', 'cards/JC.png', 'cards/QC.png', 'cards/KC.png', 'cards/AD.png', 'cards/2D.png', 'cards/3D.png', 'cards/4D.png', 'cards/5D.png', 'cards/6D.png', 'cards/7D.png', 'cards/8D.png', 'cards/9D.png', 'cards/10D.png', 'cards/JD.png', 'cards/QD.png', 'cards/KD.png', 'cards/AH.png', 'cards/2H.png', 'cards/3H.png', 'cards/4H.png', 'cards/5H.png', 'cards/6H.png', 'cards/7H.png', 'cards/8H.png', 'cards/9H.png', 'cards/10H.png', 'cards/JH.png', 'cards/QH.png', 'cards/KH.png', 'cards/AS.png', 'cards/2S.png', 'cards/3S.png', 'cards/4S.png', 'cards/5S.png', 'cards/6S.png', 'cards/7S.png', 'cards/8S.png', 'cards/9S.png', 'cards/10S.png', 'cards/JS.png', 'cards/QS.png', 'cards/KS.png'];
+const allCardImages = [
+  "cards/AC.png","cards/2C.png","cards/3C.png","cards/4C.png","cards/5C.png","cards/6C.png","cards/7C.png","cards/8C.png","cards/9C.png","cards/10C.png","cards/JC.png","cards/QC.png","cards/KC.png",
+  "cards/AD.png","cards/2D.png","cards/3D.png","cards/4D.png","cards/5D.png","cards/6D.png","cards/7D.png","cards/8D.png","cards/9D.png","cards/10D.png","cards/JD.png","cards/QD.png","cards/KD.png",
+  "cards/AH.png","cards/2H.png","cards/3H.png","cards/4H.png","cards/5H.png","cards/6H.png","cards/7H.png","cards/8H.png","cards/9H.png","cards/10H.png","cards/JH.png","cards/QH.png","cards/KH.png",
+  "cards/AS.png","cards/2S.png","cards/3S.png","cards/4S.png","cards/5S.png","cards/6S.png","cards/7S.png","cards/8S.png","cards/9S.png","cards/10S.png","cards/JS.png","cards/QS.png","cards/KS.png"
+];
 
 let deck = [];
 let playerCards = [];
 let dealerCards = [];
+let dealerHiddenCard = null;
+let gameStarted = false;
 
 function shuffleDeck() {
   deck = [...allCardImages];
@@ -49,21 +55,25 @@ function animateCard(img) {
 function renderCards() {
   const area = document.getElementById("game-area");
   area.innerHTML = "";
+
   playerCards.forEach((card, i) => {
     const img = document.createElement("img");
     img.src = card;
     img.className = "card";
     img.style.left = `${100 + i * 90}px`;
     img.style.top = `65%`;
+    img.style.position = "absolute";
     area.appendChild(img);
     animateCard(img);
   });
+
   dealerCards.forEach((card, i) => {
     const img = document.createElement("img");
-    img.src = card;
+    img.src = card === "hidden" ? "cards/back.png" : card;
     img.className = "card";
     img.style.left = `${100 + i * 90}px`;
     img.style.top = `15%`;
+    img.style.position = "absolute";
     area.appendChild(img);
     animateCard(img);
   });
@@ -75,14 +85,35 @@ function showStatus(text) {
 
 function startGame() {
   shuffleDeck();
-  playerCards = [drawCard(), drawCard()];
-  dealerCards = [drawCard()];
+  playerCards = [];
+  dealerCards = [];
+  dealerHiddenCard = drawCard(); // 第二张庄家牌，先隐藏
+
+  gameStarted = true;
+
+  // 动画发牌：玩家1张 ➜ 庄家1张 ➜ 玩家2张 ➜ 庄家盖牌
+  playerCards.push(drawCard());
   renderCards();
-  showStatus("请选择：要牌或停牌");
+
+  setTimeout(() => {
+    dealerCards.push(drawCard());
+    renderCards();
+  }, 400);
+
+  setTimeout(() => {
+    playerCards.push(drawCard());
+    renderCards();
+  }, 800);
+
+  setTimeout(() => {
+    dealerCards.push("hidden"); // 显示背面图
+    renderCards();
+    showStatus("请选择：要牌或停牌");
+  }, 1200);
 }
 
 function hitCard() {
-  if (calculatePoints(playerCards) >= 21) return;
+  if (!gameStarted || calculatePoints(playerCards) >= 21) return;
   playerCards.push(drawCard());
   renderCards();
   const points = calculatePoints(playerCards);
@@ -91,9 +122,16 @@ function hitCard() {
 }
 
 function stand() {
+  if (!gameStarted) return;
+
+  // 翻开庄家第二张牌
+  dealerCards[1] = dealerHiddenCard;
+
+  // 庄家补牌直到17点以上
   while (calculatePoints(dealerCards) < 17) {
     dealerCards.push(drawCard());
   }
+
   renderCards();
 
   const player = calculatePoints(playerCards);
