@@ -23,7 +23,14 @@
 
     .card {
       width: 80px;
-      transition: all 0.4s ease;
+      position: absolute;
+      transition: all 0.6s ease;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      padding: 2px;
+      transform: scale(0.2);
+      opacity: 0;
     }
 
     .controls {
@@ -60,13 +67,12 @@
 
   <div class="controls">
     <button onclick="startGame()">开始发牌</button>
-    <button onclick="hitCard()">要牌</button>
-    <button onclick="stand()">停牌</button>
+    <button onclick="hitCard()">🎴 要牌</button>
+    <button onclick="stand()">✋ 停牌</button>
   </div>
 
   <div id="status">点击「开始发牌」开始游戏</div>
 
-  <!-- 确保脚本放在最后 -->
   <script src="script.js" defer></script>
 </body>
 </html>
