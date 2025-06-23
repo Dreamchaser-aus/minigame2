@@ -1,145 +1,131 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Blackjack 房间</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blackjack Room</title>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-      font-family: 'Segoe UI', sans-serif;
-    }
-
     body {
-      background: url('table.jpg') no-repeat center center;
+      margin: 0;
+      background: url('table.jpg') no-repeat center center fixed;
       background-size: cover;
-      position: relative;
-    }
-
-    .card-container {
-      position: absolute;
-      display: flex;
-      flex-direction: row;
-      gap: 10px;
-      overflow-x: auto;
-      padding: 0 10px;
-    }
-
-    #dealer-area {
-      top: 15%;
-      left: 0;
-      right: 0;
-      height: 110px;
-    }
-
-    #player-area {
-      top: 65%;
-      left: 0;
-      right: 0;
-      height: 110px;
-    }
-
-    .card {
-      min-width: 60px;
-      height: auto;
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      padding: 4px;
-      box-sizing: border-box;
-      transition: all 0.6s ease-out;
-    }
-
-    .controls {
-      position: absolute;
-      bottom: 20px;
-      width: 100%;
-      text-align: center;
-      z-index: 10;
-    }
-
-    button {
-      margin: 5px;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: none;
-      background-color: #1abc9c;
+      font-family: Arial, sans-serif;
       color: white;
-      cursor: pointer;
-    }
-
-    #status {
-      position: absolute;
-      bottom: 70px;
-      width: 100%;
-      text-align: center;
-      color: white;
-      font-weight: bold;
-      z-index: 9;
-    }
-
-    .points-display {
-      position: absolute;
-      bottom: 130px;
-      left: 10px;
-      color: white;
-      font-weight: bold;
-      z-index: 9;
     }
 
     .back-btn {
       position: absolute;
       top: 10px;
       left: 10px;
-      z-index: 99;
-      background: rgba(0,0,0,0.5);
-      color: white;
+      background: black;
       padding: 6px 12px;
       border-radius: 6px;
       text-decoration: none;
+      color: white;
+      font-weight: bold;
+      z-index: 10;
     }
 
-    @media (max-width: 600px) {
-      button {
-        font-size: 14px;
-        padding: 8px 16px;
-      }
-      .card {
-        min-width: 50px;
-      }
+    .card-container {
+      position: absolute;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 0 10px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #dealer-area {
+      top: 80px;
+      width: 100%;
+    }
+
+    #player-area {
+      bottom: 160px;
+      width: 100%;
+    }
+
+    .card {
+      width: 14vw;
+      max-width: 60px;
+      height: auto;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      padding: 4px;
+      box-sizing: border-box;
+      transition: all 0.4s ease;
+    }
+
+    .points-display {
+      position: absolute;
+      bottom: 130px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px black;
+    }
+
+    .controls {
+      position: absolute;
+      bottom: 60px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+    }
+
+    .controls button {
+      margin: 0 6px;
+      padding: 10px 18px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      background-color: #00c2a8;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      transition: background 0.3s;
+    }
+
+    .controls button:hover {
+      background-color: #00a291;
+    }
+
+    #status {
+      position: absolute;
+      bottom: 100px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px black;
     }
   </style>
 </head>
 <body>
-
-  <!-- 返回首页按钮 -->
   <a href="index.html" class="back-btn">⬅ 返回首页</a>
 
-  <!-- 庄家与玩家发牌区域 -->
   <div id="dealer-area" class="card-container"></div>
   <div id="player-area" class="card-container"></div>
 
-  <!-- 点数显示 -->
   <div class="points-display">
     <div id="player-points">玩家点数: 0</div>
     <div id="dealer-points">庄家点数: ?</div>
   </div>
 
-  <!-- 控制按钮 -->
   <div class="controls">
     <button onclick="startGame()">开始发牌</button>
     <button onclick="hitCard()">🃏 要牌</button>
     <button onclick="stand()">✋ 停牌</button>
   </div>
 
-  <!-- 状态提示 -->
   <div id="status">点击「开始发牌」开始游戏</div>
 
-  <!-- 游戏逻辑 -->
   <script src="script.js" defer></script>
 </body>
 </html>
