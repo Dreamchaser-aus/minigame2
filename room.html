@@ -24,6 +24,13 @@
       height: auto;
       transition: all 0.6s ease-out;
       position: absolute;
+
+      /* ✅ 加白底 + 阴影 + 圆角 + 内边距 */
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      padding: 4px;
+      box-sizing: border-box;
     }
 
     #game-area {
@@ -118,7 +125,7 @@
   <!-- 状态提示 -->
   <div id="status">点击「开始发牌」开始游戏</div>
 
-  <!-- 脚本 -->
+  <!-- 游戏逻辑 -->
   <script src="script.js" defer></script>
 </body>
 </html>
