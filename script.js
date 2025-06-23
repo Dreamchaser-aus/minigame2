@@ -1,19 +1,76 @@
-let playerCards = [];
-let dealerCards = [];
-let allCardImages = [
-  "cards/AS.png", "cards/KD.png", "cards/5H.png", "cards/9C.png",
-  "cards/2D.png", "cards/QH.png", "cards/7S.png", "cards/3C.png",
-  "cards/6H.png", "cards/JD.png", "cards/4S.png", "cards/10D.png"
+const allCardImages = [
+  "cards/AC.png",
+  "cards/2C.png",
+  "cards/3C.png",
+  "cards/4C.png",
+  "cards/5C.png",
+  "cards/6C.png",
+  "cards/7C.png",
+  "cards/8C.png",
+  "cards/9C.png",
+  "cards/10C.png",
+  "cards/JC.png",
+  "cards/QC.png",
+  "cards/KC.png",
+  "cards/AD.png",
+  "cards/2D.png",
+  "cards/3D.png",
+  "cards/4D.png",
+  "cards/5D.png",
+  "cards/6D.png",
+  "cards/7D.png",
+  "cards/8D.png",
+  "cards/9D.png",
+  "cards/10D.png",
+  "cards/JD.png",
+  "cards/QD.png",
+  "cards/KD.png",
+  "cards/AH.png",
+  "cards/2H.png",
+  "cards/3H.png",
+  "cards/4H.png",
+  "cards/5H.png",
+  "cards/6H.png",
+  "cards/7H.png",
+  "cards/8H.png",
+  "cards/9H.png",
+  "cards/10H.png",
+  "cards/JH.png",
+  "cards/QH.png",
+  "cards/KH.png",
+  "cards/AS.png",
+  "cards/2S.png",
+  "cards/3S.png",
+  "cards/4S.png",
+  "cards/5S.png",
+  "cards/6S.png",
+  "cards/7S.png",
+  "cards/8S.png",
+  "cards/9S.png",
+  "cards/10S.png",
+  "cards/JS.png",
+  "cards/QS.png",
+  "cards/KS.png"
 ];
 
+let deck = [];
+let playerCards = [];
+let dealerCards = [];
+
+function shuffleDeck() {
+  deck = [...allCardImages];
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+}
+
 function drawCard() {
-  const idx = Math.floor(Math.random() * allCardImages.length);
-  return allCardImages[idx];
+  return deck.pop();
 }
 
 function getCardValue(filename) {
-  const name = filename.split("/").pop().replace(".png", "");
-  const rank = name.slice(0, -1);
+  const rank = filename.split("/").pop().replace(".png", "").slice(0, -1);
   if (["J", "Q", "K"].includes(rank)) return 10;
   if (rank === "A") return 11;
   return parseInt(rank);
@@ -35,82 +92,57 @@ function calculatePoints(cards) {
 }
 
 function renderCards() {
-  const gameArea = document.getElementById("game-area");
-  gameArea.innerHTML = "";
-
-  playerCards.forEach((src, i) => {
+  const area = document.getElementById("game-area");
+  area.innerHTML = "";
+  playerCards.forEach((card, i) => {
     const img = document.createElement("img");
-    img.src = src;
+    img.src = card;
     img.className = "card";
-    img.style.top = "60%";
-    img.style.left = `calc(50% + ${(i - (playerCards.length - 1) / 2) * 90}px)`;
-    img.style.zIndex = 10 + i;
-    gameArea.appendChild(img);
+    img.style.left = `${40 + i * 90}px`;
+    img.style.top = `60%`;
+    area.appendChild(img);
   });
-
-  dealerCards.forEach((src, i) => {
+  dealerCards.forEach((card, i) => {
     const img = document.createElement("img");
-    img.src = src;
+    img.src = card;
     img.className = "card";
-    img.style.top = "25%";
-    img.style.left = `calc(50% + ${(i - (dealerCards.length - 1) / 2) * 90}px)`;
-    img.style.zIndex = 5 + i;
-    gameArea.appendChild(img);
+    img.style.left = `${40 + i * 90}px`;
+    img.style.top = `20%`;
+    area.appendChild(img);
   });
 }
 
-function initBlackjack() {
+function showStatus(text) {
+  document.getElementById("status").innerText = text;
+}
+
+function startGame() {
+  shuffleDeck();
   playerCards = [drawCard(), drawCard()];
-  dealerCards = [drawCard(), drawCard()];
+  dealerCards = [drawCard()];
   renderCards();
+  showStatus("请选择：要牌或停牌");
 }
 
-function placeBet() {
-  const amount = document.getElementById("bet-amount").value;
-  alert(`你下注了 ${amount || 0} 元！`);
-}
-
-function dealCards() {
-  initBlackjack();
-}
-
-function resetGame() {
-  document.getElementById("game-area").innerHTML = "";
-  playerCards = [];
-  dealerCards = [];
-}
-
-function playerHit() {
-  if (playerCards.length >= 5) {
-    alert("不能再要牌了！");
-    return;
-  }
+function hitCard() {
+  if (calculatePoints(playerCards) >= 21) return;
   playerCards.push(drawCard());
   renderCards();
   const points = calculatePoints(playerCards);
-  if (points > 21) {
-    alert(`你的点数是 ${points}，爆牌！你输了 😢`);
-  }
+  if (points > 21) showStatus("你爆了，庄家赢！");
+  else if (points === 21) showStatus("你达到21点！");
 }
 
-function playerStand() {
-  const playerPoints = calculatePoints(playerCards);
-  let dealerPoints = calculatePoints(dealerCards);
-  while (dealerPoints < 17) {
+function stand() {
+  while (calculatePoints(dealerCards) < 17) {
     dealerCards.push(drawCard());
-    dealerPoints = calculatePoints(dealerCards);
   }
   renderCards();
 
-  if (playerPoints > 21) {
-    alert(`你爆牌了 (${playerPoints})，你输了 😢`);
-  } else if (dealerPoints > 21) {
-    alert(`庄家爆牌了 (${dealerPoints})，你赢了 🎉`);
-  } else if (playerPoints > dealerPoints) {
-    alert(`你赢了！你的点数：${playerPoints}，庄家：${dealerPoints} 🎉`);
-  } else if (playerPoints < dealerPoints) {
-    alert(`你输了！你的点数：${playerPoints}，庄家：${dealerPoints} 😢`);
-  } else {
-    alert(`平局！双方都是 ${playerPoints} 🤝`);
-  }
+  const player = calculatePoints(playerCards);
+  const dealer = calculatePoints(dealerCards);
+
+  if (dealer > 21 || player > dealer) showStatus("你赢了！");
+  else if (player < dealer) showStatus("庄家赢！");
+  else showStatus("平局！");
 }
