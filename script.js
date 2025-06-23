@@ -1,3 +1,4 @@
+
 const allCardImages = [
   "cards/AC.png","cards/2C.png","cards/3C.png","cards/4C.png","cards/5C.png","cards/6C.png","cards/7C.png","cards/8C.png","cards/9C.png","cards/10C.png","cards/JC.png","cards/QC.png","cards/KC.png",
   "cards/AD.png","cards/2D.png","cards/3D.png","cards/4D.png","cards/5D.png","cards/6D.png","cards/7D.png","cards/8D.png","cards/9D.png","cards/10D.png","cards/JD.png","cards/QD.png","cards/KD.png",
@@ -34,7 +35,7 @@ function calculatePoints(cards) {
   let total = 0;
   let aceCount = 0;
   cards.forEach(card => {
-    if (card === "hidden") return; // 跳过隐藏牌
+    if (card === "hidden") return;
     const val = getCardValue(card);
     total += val;
     if (val === 11) aceCount++;
@@ -46,76 +47,59 @@ function calculatePoints(cards) {
   return total;
 }
 
-function animateCard(img) {
+function createCardElement(src, top, left) {
+  const img = document.createElement("img");
+  img.src = src === "hidden" ? "cards/back.png" : src;
+  img.className = "card";
+  img.style.position = "absolute";
+  img.style.left = "50%";
+  img.style.top = "40%";
+  img.style.transform = "scale(0.3)";
+  img.style.opacity = "0";
+  document.getElementById("game-area").appendChild(img);
+
   setTimeout(() => {
-    img.style.transform = "scale(1)";
+    img.style.left = left;
+    img.style.top = top;
     img.style.opacity = "1";
+    img.style.transform = "scale(1)";
   }, 50);
-}
-
-function renderCards() {
-  const area = document.getElementById("game-area");
-  area.innerHTML = "";
-
-  playerCards.forEach((card, i) => {
-    const img = document.createElement("img");
-    img.src = card;
-    img.className = "card";
-    img.style.left = `${100 + i * 90}px`;
-    img.style.top = `65%`;
-    img.style.position = "absolute";
-    area.appendChild(img);
-    animateCard(img);
-  });
-
-  dealerCards.forEach((card, i) => {
-    const img = document.createElement("img");
-    img.src = (card === "hidden") ? "cards/back.png" : card;
-    img.className = "card";
-    img.style.left = `${100 + i * 90}px`;
-    img.style.top = `15%`;
-    img.style.position = "absolute";
-    area.appendChild(img);
-    animateCard(img);
-  });
 }
 
 function showStatus(text) {
   document.getElementById("status").innerText = text;
 }
 
+function renderAllCards() {
+  const area = document.getElementById("game-area");
+  area.innerHTML = "";
+  playerCards.forEach((card, i) => createCardElement(card, "65%", `${100 + i * 90}px`));
+  dealerCards.forEach((card, i) => createCardElement(card, "15%", `${100 + i * 90}px`));
+}
+
 function startGame() {
   shuffleDeck();
   playerCards = [];
   dealerCards = [];
-  dealerHiddenCard = drawCard(); // 真正的第二张庄家牌
+  dealerHiddenCard = drawCard();
   gameStarted = true;
 
-  // 动画依次发牌：玩家1张 -> 庄家1张 -> 玩家2张 -> 庄家盖牌
-  playerCards.push(drawCard());
-  renderCards();
+  const actions = [
+    () => { playerCards.push(drawCard()); renderAllCards(); },
+    () => { dealerCards.push(drawCard()); renderAllCards(); },
+    () => { playerCards.push(drawCard()); renderAllCards(); },
+    () => { dealerCards.push("hidden"); renderAllCards(); showStatus("请选择：要牌或停牌"); }
+  ];
 
-  setTimeout(() => {
-    dealerCards.push(drawCard());
-    renderCards();
-  }, 400);
-
-  setTimeout(() => {
-    playerCards.push(drawCard());
-    renderCards();
-  }, 800);
-
-  setTimeout(() => {
-    dealerCards.push("hidden"); // 显示背面图
-    renderCards();
-    showStatus("请选择：要牌或停牌");
-  }, 1200);
+  actions.forEach((fn, i) => {
+    setTimeout(fn, i * 500);
+  });
 }
 
 function hitCard() {
   if (!gameStarted || calculatePoints(playerCards) >= 21) return;
   playerCards.push(drawCard());
-  renderCards();
+  renderAllCards();
   const points = calculatePoints(playerCards);
   if (points > 21) showStatus("你爆了，庄家赢！");
   else if (points === 21) showStatus("你达到21点！");
@@ -123,15 +107,11 @@ function hitCard() {
 
 function stand() {
   if (!gameStarted) return;
-
-  // 揭开庄家第二张盖牌
   dealerCards[1] = dealerHiddenCard;
-
   while (calculatePoints(dealerCards) < 17) {
     dealerCards.push(drawCard());
   }
-
-  renderCards();
+  renderAllCards();
 
   const player = calculatePoints(playerCards);
   const dealer = calculatePoints(dealerCards);
