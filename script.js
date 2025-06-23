@@ -122,16 +122,8 @@ function stand() {
   if (!gameStarted) return;
   dealerCards[1] = dealerHiddenCard;
 
-  gameArea.innerHTML = "";
-  dealerCards.forEach((card, i) => {
-    const left = 100 + i * 90 + "px";
-    createCard(card, "15%", left);
-  });
-
-  playerCards.forEach((card, i) => {
-    const left = 100 + i * 90 + "px";
-    createCard(card, "65%", left);
-  });
+  const imgList = gameArea.querySelectorAll("img");
+  if (imgList[3]) imgList[3].src = dealerHiddenCard; // 第4张是庄家盖牌
 
   while (calculatePoints(dealerCards) < 17) {
     const card = drawCard();
