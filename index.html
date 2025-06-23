@@ -1,51 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Blackjack 房间大厅</title>
+  <title>选择房间 - Blackjack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body {
-      font-family: sans-serif;
-      background: #0b1e2d;
-      color: white;
+    html, body {
       margin: 0;
-      padding: 20px;
-      text-align: center;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('table.jpg') no-repeat center center;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-    h1 { margin-bottom: 20px; }
+
+    .container {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 30px 20px;
+      border-radius: 12px;
+      text-align: center;
+      color: white;
+      max-width: 90%;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
     .room-list {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
+      flex-direction: column;
+      gap: 15px;
     }
-    .room {
-      background: #122c42;
-      border: 2px solid #00c3ff;
-      padding: 30px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: transform 0.3s;
+
+    .room-button {
+      padding: 12px;
+      font-size: 18px;
+      background-color: #1abc9c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      display: block;
+      transition: background 0.3s;
     }
-    .room:hover {
-      transform: scale(1.05);
-      background: #164563;
+
+    .room-button:hover {
+      background-color: #16a085;
+    }
+
+    @media(min-width: 768px) {
+      .room-list {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .room-button {
+        min-width: 160px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>🎲 选择一个 Blackjack 房间</h1>
-  <div class="room-list">
-    <div class="room" onclick="enterRoom(1)">房间 1</div>
-    <div class="room" onclick="enterRoom(2)">房间 2</div>
-    <div class="room" onclick="enterRoom(3)">房间 3</div>
+  <div class="container">
+    <h1>请选择一个房间进入</h1>
+    <div class="room-list">
+      <a href="room.html?room=1" class="room-button">进入房间 1</a>
+      <a href="room.html?room=2" class="room-button">进入房间 2</a>
+      <a href="room.html?room=3" class="room-button">进入房间 3</a>
+    </div>
   </div>
-
-  <script>
-    function enterRoom(id) {
-      window.location.href = `room.html?room=${id}`;
-    }
-  </script>
 </body>
 </html>
