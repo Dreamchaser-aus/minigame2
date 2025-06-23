@@ -119,14 +119,16 @@ function hitCard() {
 }
 
 
-function dealDealerCardsSequentially(index = 2) {
+function dealDealerCardsSequentially() {
   if (calculatePoints(dealerCards) < 17) {
     const card = drawCard();
     dealerCards.push(card);
     const left = 100 + (dealerCards.length - 1) * 90 + "px";
     createCard(card, "15%", left);
-    setTimeout(() => dealDealerCardsSequentially(index + 1), 600);
-  } else {
+    setTimeout(dealDealerCardsSequentially, 700); // 等待动画结束再递归
+    return;
+  }
+  // 补牌结束后判断胜负
     const player = calculatePoints(playerCards);
     const dealer = calculatePoints(dealerCards);
     if (dealer > 21 || player > dealer) showStatus("你赢了！");
