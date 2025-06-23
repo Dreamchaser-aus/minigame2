@@ -135,11 +135,17 @@ function animateCard(card, areaId, index) {
   const cardName = card.suit === 'back' ? 'back' : `${card.value}${card.suit}`;
   img.src = `cards/${cardName}.png`;
   img.style.opacity = 0;
-  img.style.transform = 'translateY(-20px) scale(0.8)';
+  img.style.position = 'absolute';
+  img.style.left = '50%';
+  img.style.top = '50%';
+  img.style.transform = 'translate(-50%, -50%) scale(0.8)';
   container.appendChild(img);
   setTimeout(() => {
-    img.style.transition = 'all 0.3s ease';
+    img.style.transition = 'all 0.4s ease';
     img.style.opacity = 1;
+    img.style.position = '';
+    img.style.left = '';
+    img.style.top = '';
     img.style.transform = 'translateY(0) scale(1)';
   }, 20);
 }
