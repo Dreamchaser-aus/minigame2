@@ -166,3 +166,65 @@ function preloadCards() {
   back.src = 'cards/back.png';
 }
 window.onload = preloadCards;
+
+
+// 替换 animateCard 实现庄家第二张牌翻面
+function animateCard(card, areaId, index) {
+  const container = document.getElementById(areaId);
+  const wrapper = document.createElement('div');
+  wrapper.className = 'card';
+
+  // 发牌动画初始位置从中间
+  wrapper.style.position = 'absolute';
+  wrapper.style.left = '50%';
+  wrapper.style.top = '50%';
+  wrapper.style.transform = 'translate(-50%, -50%) scale(0.8)';
+  wrapper.style.opacity = 0;
+  wrapper.style.transition = 'all 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+
+  // 庄家第2张牌翻牌处理
+  if (areaId === 'dealer-area' && index === 1 && !playerStands) {
+    wrapper.classList.add('flip');
+    wrapper.setAttribute('data-card', `${card.value}${card.suit}`);
+
+    const back = document.createElement('img');
+    back.className = 'back';
+    back.src = 'cards/back.png';
+
+    const front = document.createElement('img');
+    front.className = 'front';
+    front.src = `cards/${card.value}${card.suit}.png`;
+
+    wrapper.appendChild(back);
+    wrapper.appendChild(front);
+  } else {
+    const img = document.createElement('img');
+    img.className = 'card';
+    const cardName = card.suit === 'back' ? 'back' : `${card.value}${card.suit}`;
+    img.src = `cards/${cardName}.png`;
+    wrapper.appendChild(img);
+  }
+
+  container.appendChild(wrapper);
+
+  setTimeout(() => {
+    wrapper.style.position = '';
+    wrapper.style.left = '';
+    wrapper.style.top = '';
+    wrapper.style.opacity = 1;
+    wrapper.style.transform = 'translateY(0) scale(1)';
+  }, 50);
+}
+
+// 翻转庄家第2张牌
+function stand() {
+  playerStands = true;
+
+  const dealerArea = document.getElementById('dealer-area');
+  const secondCard = dealerArea.children[1];
+  if (secondCard && secondCard.classList.contains('flip')) {
+    secondCard.classList.add('flipped');
+  }
+
+  dealerPlay();
+}
