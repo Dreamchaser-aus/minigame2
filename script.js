@@ -1,56 +1,9 @@
+// 全部 52 张牌
 const allCardImages = [
-  "cards/AC.png",
-  "cards/2C.png",
-  "cards/3C.png",
-  "cards/4C.png",
-  "cards/5C.png",
-  "cards/6C.png",
-  "cards/7C.png",
-  "cards/8C.png",
-  "cards/9C.png",
-  "cards/10C.png",
-  "cards/JC.png",
-  "cards/QC.png",
-  "cards/KC.png",
-  "cards/AD.png",
-  "cards/2D.png",
-  "cards/3D.png",
-  "cards/4D.png",
-  "cards/5D.png",
-  "cards/6D.png",
-  "cards/7D.png",
-  "cards/8D.png",
-  "cards/9D.png",
-  "cards/10D.png",
-  "cards/JD.png",
-  "cards/QD.png",
-  "cards/KD.png",
-  "cards/AH.png",
-  "cards/2H.png",
-  "cards/3H.png",
-  "cards/4H.png",
-  "cards/5H.png",
-  "cards/6H.png",
-  "cards/7H.png",
-  "cards/8H.png",
-  "cards/9H.png",
-  "cards/10H.png",
-  "cards/JH.png",
-  "cards/QH.png",
-  "cards/KH.png",
-  "cards/AS.png",
-  "cards/2S.png",
-  "cards/3S.png",
-  "cards/4S.png",
-  "cards/5S.png",
-  "cards/6S.png",
-  "cards/7S.png",
-  "cards/8S.png",
-  "cards/9S.png",
-  "cards/10S.png",
-  "cards/JS.png",
-  "cards/QS.png",
-  "cards/KS.png"
+  "cards/AC.png","cards/2C.png","cards/3C.png","cards/4C.png","cards/5C.png","cards/6C.png","cards/7C.png","cards/8C.png","cards/9C.png","cards/10C.png","cards/JC.png","cards/QC.png","cards/KC.png",
+  "cards/AD.png","cards/2D.png","cards/3D.png","cards/4D.png","cards/5D.png","cards/6D.png","cards/7D.png","cards/8D.png","cards/9D.png","cards/10D.png","cards/JD.png","cards/QD.png","cards/KD.png",
+  "cards/AH.png","cards/2H.png","cards/3H.png","cards/4H.png","cards/5H.png","cards/6H.png","cards/7H.png","cards/8H.png","cards/9H.png","cards/10H.png","cards/JH.png","cards/QH.png","cards/KH.png",
+  "cards/AS.png","cards/2S.png","cards/3S.png","cards/4S.png","cards/5S.png","cards/6S.png","cards/7S.png","cards/8S.png","cards/9S.png","cards/10S.png","cards/JS.png","cards/QS.png","cards/KS.png"
 ];
 
 let deck = [];
@@ -100,6 +53,7 @@ function renderCards() {
     img.className = "card";
     img.style.left = `${40 + i * 90}px`;
     img.style.top = `60%`;
+    img.style.position = "absolute";
     area.appendChild(img);
   });
   dealerCards.forEach((card, i) => {
@@ -108,12 +62,16 @@ function renderCards() {
     img.className = "card";
     img.style.left = `${40 + i * 90}px`;
     img.style.top = `20%`;
+    img.style.position = "absolute";
     area.appendChild(img);
   });
 }
 
 function showStatus(text) {
-  document.getElementById("status").innerText = text;
+  const statusDiv = document.getElementById("status");
+  if (statusDiv) {
+    statusDiv.innerText = text;
+  }
 }
 
 function startGame() {
@@ -146,3 +104,6 @@ function stand() {
   else if (player < dealer) showStatus("庄家赢！");
   else showStatus("平局！");
 }
+
+// ✅ 初始化调试确认
+console.log("✅ script.js 已加载");
