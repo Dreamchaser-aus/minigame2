@@ -2,19 +2,19 @@
 let deck = [];
 let playerHand = [];
 let dealerHand = [];
-let gameStarted = false;
 let playerStands = false;
 
+const suits = ['H', 'D', 'C', 'S'];
+const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+
 function createDeck() {
-  const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
-  const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
-  let deck = [];
+  deck = [];
   for (let suit of suits) {
     for (let value of values) {
       deck.push({ suit, value });
     }
   }
-  return shuffle(deck);
+  shuffle(deck);
 }
 
 function shuffle(array) {
@@ -22,131 +22,124 @@ function shuffle(array) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
-  return array;
-}
-
-function dealCard(hand, containerId) {
-  const card = deck.pop();
-  hand.push(card);
-  const cardImg = document.createElement('img');
-  cardImg.classList.add('card');
-
-  // Shorthand suit mapping
-  const suitMap = {
-    hearts: 'H',
-    diamonds: 'D',
-    clubs: 'C',
-    spades: 'S'
-  };
-
-  cardImg.src = `cards/${card.value}${suitMap[card.suit]}.png`;
-  document.getElementById(containerId).appendChild(cardImg);
-  return card;
-}
-
-function calculatePoints(hand, hideSecondCard = false) {
-  let total = 0;
-  let aces = 0;
-
-  hand.forEach((card, index) => {
-    if (hideSecondCard && index === 1) return;
-    if (['J', 'Q', 'K'].includes(card.value)) {
-      total += 10;
-    } else if (card.value === 'A') {
-      total += 11;
-      aces++;
-    } else {
-      total += parseInt(card.value);
-    }
-  });
-
-  while (total > 21 && aces > 0) {
-    total -= 10;
-    aces--;
-  }
-
-  return total;
-}
-
-function updatePoints() {
-  const playerPoints = calculatePoints(playerHand);
-  const dealerPoints = playerStands ? calculatePoints(dealerHand) : calculatePoints(dealerHand, true);
-
-  document.getElementById("player-points").textContent = `玩家点数: ${playerPoints}`;
-  document.getElementById("dealer-points").textContent = `庄家点数: ${playerStands ? dealerPoints : '?'}`;
-}
-
-function clearBoard() {
-  document.getElementById("player-area").innerHTML = '';
-  document.getElementById("dealer-area").innerHTML = '';
-  playerHand = [];
-  dealerHand = [];
-  playerStands = false;
 }
 
 function startGame() {
   clearBoard();
-  deck = createDeck();
-  gameStarted = true;
+  createDeck();
+  playerHand = [deck.pop(), deck.pop()];
+  dealerHand = [deck.pop(), deck.pop()];
+  playerStands = false;
+  updateStatus('请选择：要牌 或 停牌');
+  dealInitialCards();
+}
 
-  dealCard(playerHand, "player-area");
-  dealCard(dealerHand, "dealer-area");
-  dealCard(playerHand, "player-area");
-  dealCard(dealerHand, "dealer-area");
-
+function clearBoard() {
+  document.getElementById('player-area').innerHTML = '';
+  document.getElementById('dealer-area').innerHTML = '';
   updatePoints();
-  document.getElementById("status").textContent = "请选择：要牌 或 停牌";
+}
+
+function updatePoints() {
+  document.getElementById('player-points').textContent = `玩家点数: ${calculatePoints(playerHand)}`;
+  document.getElementById('dealer-points').textContent = playerStands ? `庄家点数: ${calculatePoints(dealerHand)}` : '庄家点数: ?';
+}
+
+function dealInitialCards() {
+  animateCard(playerHand[0], 'player-area', 0);
+  setTimeout(() => animateCard(dealerHand[0], 'dealer-area', 0), 400);
+  setTimeout(() => animateCard(playerHand[1], 'player-area', 1), 800);
+  setTimeout(() => animateCard({ suit: 'back', value: '' }, 'dealer-area', 1), 1200);
+  setTimeout(updatePoints, 1400);
 }
 
 function hitCard() {
-  if (!gameStarted || playerStands) return;
-  dealCard(playerHand, "player-area");
+  if (playerStands) return;
+  const card = deck.pop();
+  playerHand.push(card);
+  animateCard(card, 'player-area', playerHand.length - 1);
   updatePoints();
-
-  const points = calculatePoints(playerHand);
-  if (points > 21) {
+  if (calculatePoints(playerHand) > 21) {
     endGame();
   }
 }
 
 function stand() {
-  if (!gameStarted || playerStands) return;
   playerStands = true;
-  updatePoints();
-  dealerTurn();
+  document.getElementById('dealer-area').lastChild.remove(); // 移除背面牌
+  animateCard(dealerHand[1], 'dealer-area', 1);
+  dealerPlay();
 }
 
-function dealerTurn() {
-  const dealerArea = document.getElementById("dealer-area");
-  const interval = setInterval(() => {
+function dealerPlay() {
+  setTimeout(function loop() {
+    updatePoints();
     const dealerPoints = calculatePoints(dealerHand);
     if (dealerPoints < 17) {
-      dealCard(dealerHand, "dealer-area");
-      updatePoints();
+      const card = deck.pop();
+      dealerHand.push(card);
+      animateCard(card, 'dealer-area', dealerHand.length - 1);
+      setTimeout(loop, 600);
     } else {
-      clearInterval(interval);
       endGame();
     }
   }, 800);
 }
 
 function endGame() {
-  updatePoints();
+  const playerScore = calculatePoints(playerHand);
+  const dealerScore = calculatePoints(dealerHand);
+  let result = '';
 
-  const playerPoints = calculatePoints(playerHand);
-  const dealerPoints = calculatePoints(dealerHand);
-
-  let result = "";
-  if (playerPoints > 21) {
-    result = "你爆了，庄家胜！";
-  } else if (dealerPoints > 21 || playerPoints > dealerPoints) {
-    result = "你赢了！🎉";
-  } else if (playerPoints < dealerPoints) {
-    result = "你输了 😢";
+  if (playerScore > 21) {
+    result = '你爆了，庄家获胜！';
+  } else if (dealerScore > 21 || playerScore > dealerScore) {
+    result = '你赢了！';
+  } else if (playerScore < dealerScore) {
+    result = '庄家赢了。';
   } else {
-    result = "平局 🤝";
+    result = '平局！';
   }
+  updateStatus(result);
+  updatePoints();
+}
 
-  document.getElementById("status").textContent = result;
-  gameStarted = false;
+function calculatePoints(hand) {
+  let total = 0;
+  let aces = 0;
+  for (let card of hand) {
+    if (card.value === 'A') {
+      aces++;
+      total += 11;
+    } else if (['K', 'Q', 'J'].includes(card.value)) {
+      total += 10;
+    } else {
+      total += parseInt(card.value);
+    }
+  }
+  while (total > 21 && aces > 0) {
+    total -= 10;
+    aces--;
+  }
+  return total;
+}
+
+function updateStatus(msg) {
+  document.getElementById('status').textContent = msg;
+}
+
+function animateCard(card, areaId, index) {
+  const container = document.getElementById(areaId);
+  const img = document.createElement('img');
+  img.className = 'card';
+  const cardName = card.suit === 'back' ? 'back' : `${card.value}${card.suit}`;
+  img.src = `cards/${cardName}.png`;
+  img.style.opacity = 0;
+  img.style.transform = 'translateY(-20px)';
+  container.appendChild(img);
+  setTimeout(() => {
+    img.style.transition = 'all 0.3s ease';
+    img.style.opacity = 1;
+    img.style.transform = 'translateY(0)';
+  }, 20);
 }
