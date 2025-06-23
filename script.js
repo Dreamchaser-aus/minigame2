@@ -118,24 +118,27 @@ function hitCard() {
   else if (points === 21) showStatus("你达到21点！");
 }
 
-function stand() {
-  if (!gameStarted) return;
-  dealerCards[1] = dealerHiddenCard;
 
-  const imgList = gameArea.querySelectorAll("img");
-  if (imgList[3]) imgList[3].src = dealerHiddenCard; // 第4张是庄家盖牌
-
-  while (calculatePoints(dealerCards) < 17) {
+function dealDealerCardsSequentially(index = 2) {
+  if (calculatePoints(dealerCards) < 17) {
     const card = drawCard();
     dealerCards.push(card);
     const left = 100 + (dealerCards.length - 1) * 90 + "px";
     createCard(card, "15%", left);
+    setTimeout(() => dealDealerCardsSequentially(index + 1), 600);
+  } else {
+    const player = calculatePoints(playerCards);
+    const dealer = calculatePoints(dealerCards);
+    if (dealer > 21 || player > dealer) showStatus("你赢了！");
+    else if (player < dealer) showStatus("庄家赢！");
+    else showStatus("平局！");
   }
+}
 
-  const player = calculatePoints(playerCards);
-  const dealer = calculatePoints(dealerCards);
-
-  if (dealer > 21 || player > dealer) showStatus("你赢了！");
-  else if (player < dealer) showStatus("庄家赢！");
-  else showStatus("平局！");
+function stand() {
+  if (!gameStarted) return;
+  const imgList = gameArea.querySelectorAll("img");
+  if (imgList[3]) imgList[3].src = dealerHiddenCard;
+  dealerCards[1] = dealerHiddenCard;
+  setTimeout(() => dealDealerCardsSequentially(), 600);
 }
