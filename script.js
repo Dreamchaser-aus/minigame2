@@ -150,3 +150,19 @@ function animateCard(card, areaId, index) {
     img.style.transform = 'translateY(0) scale(1) rotate(0deg)';
   }, 20);
 }
+
+
+// ✅ 预加载所有卡牌图片，提升首次发牌流畅度
+function preloadCards() {
+  const suits = ['H', 'D', 'C', 'S'];
+  const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+  for (let suit of suits) {
+    for (let value of values) {
+      const img = new Image();
+      img.src = `cards/${value}${suit}.png`;
+    }
+  }
+  const back = new Image();
+  back.src = 'cards/back.png';
+}
+window.onload = preloadCards;
