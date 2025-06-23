@@ -11,6 +11,7 @@ let playerCards = [];
 let dealerCards = [];
 let dealerHiddenCard = null;
 let gameStarted = false;
+let gameArea;
 
 function shuffleDeck() {
   deck = [...allCardImages];
@@ -47,59 +48,71 @@ function calculatePoints(cards) {
   return total;
 }
 
-function createCardElement(src, top, left) {
+function createCard(card, top, left) {
   const img = document.createElement("img");
-  img.src = src === "hidden" ? "cards/back.png" : src;
+  img.src = card === "hidden" ? "cards/back.png" : card;
   img.className = "card";
   img.style.position = "absolute";
   img.style.left = "50%";
   img.style.top = "40%";
   img.style.transform = "scale(0.3)";
   img.style.opacity = "0";
-  document.getElementById("game-area").appendChild(img);
+  gameArea.appendChild(img);
 
   setTimeout(() => {
     img.style.left = left;
     img.style.top = top;
     img.style.opacity = "1";
     img.style.transform = "scale(1)";
-  }, 50);
+  }, 30);
 }
 
 function showStatus(text) {
   document.getElementById("status").innerText = text;
 }
 
-function renderAllCards() {
-  const area = document.getElementById("game-area");
-  area.innerHTML = "";
-  playerCards.forEach((card, i) => createCardElement(card, "65%", `${100 + i * 90}px`));
-  dealerCards.forEach((card, i) => createCardElement(card, "15%", `${100 + i * 90}px`));
-}
-
 function startGame() {
+  gameArea = document.getElementById("game-area");
+  gameArea.innerHTML = "";
+
   shuffleDeck();
   playerCards = [];
   dealerCards = [];
   dealerHiddenCard = drawCard();
   gameStarted = true;
 
-  const actions = [
-    () => { playerCards.push(drawCard()); renderAllCards(); },
-    () => { dealerCards.push(drawCard()); renderAllCards(); },
-    () => { playerCards.push(drawCard()); renderAllCards(); },
-    () => { dealerCards.push("hidden"); renderAllCards(); showStatus("请选择：要牌或停牌"); }
+  const sequence = [
+    () => {
+      const card = drawCard();
+      playerCards.push(card);
+      createCard(card, "65%", "100px");
+    },
+    () => {
+      const card = drawCard();
+      dealerCards.push(card);
+      createCard(card, "15%", "100px");
+    },
+    () => {
+      const card = drawCard();
+      playerCards.push(card);
+      createCard(card, "65%", "190px");
+    },
+    () => {
+      dealerCards.push("hidden");
+      createCard("hidden", "15%", "190px");
+      showStatus("请选择：要牌或停牌");
+    }
   ];
 
-  actions.forEach((fn, i) => {
-    setTimeout(fn, i * 500);
-  });
+  sequence.forEach((fn, i) => setTimeout(fn, i * 600));
 }
 
 function hitCard() {
   if (!gameStarted || calculatePoints(playerCards) >= 21) return;
-  playerCards.push(drawCard());
-  renderAllCards();
+  const card = drawCard();
+  playerCards.push(card);
+  const left = 100 + (playerCards.length - 1) * 90 + "px";
+  createCard(card, "65%", left);
   const points = calculatePoints(playerCards);
   if (points > 21) showStatus("你爆了，庄家赢！");
   else if (points === 21) showStatus("你达到21点！");
@@ -108,10 +121,24 @@ function hitCard() {
 function stand() {
   if (!gameStarted) return;
   dealerCards[1] = dealerHiddenCard;
+
+  gameArea.innerHTML = "";
+  dealerCards.forEach((card, i) => {
+    const left = 100 + i * 90 + "px";
+    createCard(card, "15%", left);
+  });
+
+  playerCards.forEach((card, i) => {
+    const left = 100 + i * 90 + "px";
+    createCard(card, "65%", left);
+  });
+
   while (calculatePoints(dealerCards) < 17) {
-    dealerCards.push(drawCard());
+    const card = drawCard();
+    dealerCards.push(card);
+    const left = 100 + (dealerCards.length - 1) * 90 + "px";
+    createCard(card, "15%", left);
   }
-  renderAllCards();
 
   const player = calculatePoints(playerCards);
   const dealer = calculatePoints(dealerCards);
