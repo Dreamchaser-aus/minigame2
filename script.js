@@ -1,4 +1,3 @@
-
 const allCardImages = [
   "cards/AC.png","cards/2C.png","cards/3C.png","cards/4C.png","cards/5C.png","cards/6C.png","cards/7C.png","cards/8C.png","cards/9C.png","cards/10C.png","cards/JC.png","cards/QC.png","cards/KC.png",
   "cards/AD.png","cards/2D.png","cards/3D.png","cards/4D.png","cards/5D.png","cards/6D.png","cards/7D.png","cards/8D.png","cards/9D.png","cards/10D.png","cards/JD.png","cards/QD.png","cards/KD.png",
@@ -57,13 +56,14 @@ function createCard(card, top, left) {
   img.style.top = "75%";
   img.style.transform = "translate(-50%, -50%) scale(0.3)";
   img.style.opacity = "0";
+  img.style.transition = "all 0.6s ease-out";
   gameArea.appendChild(img);
 
   setTimeout(() => {
     img.style.left = left;
     img.style.top = top;
     img.style.opacity = "1";
-    img.style.transform = "scale(1)";
+    img.style.transform = "translate(0, 0) scale(1)";
   }, 30);
 }
 
@@ -118,37 +118,36 @@ function hitCard() {
   else if (points === 21) showStatus("你达到21点！");
 }
 
-
 function dealDealerCardsSequentially() {
   if (calculatePoints(dealerCards) < 17) {
     const card = drawCard();
     dealerCards.push(card);
     const left = 100 + (dealerCards.length - 1) * 90 + "px";
     createCard(card, "15%", left);
-    setTimeout(dealDealerCardsSequentially, 700); // 等待动画结束再递归
+    setTimeout(dealDealerCardsSequentially, 700);
     return;
   }
-  // 补牌结束后判断胜负
-    const player = calculatePoints(playerCards);
-    const dealer = calculatePoints(dealerCards);
-    if (dealer > 21 || player > dealer) showStatus("你赢了！");
-    else if (player < dealer) showStatus("庄家赢！");
-    else showStatus("平局！");
-  }
+
+  const player = calculatePoints(playerCards);
+  const dealer = calculatePoints(dealerCards);
+  if (dealer > 21 || player > dealer) showStatus("你赢了！");
+  else if (player < dealer) showStatus("庄家赢！");
+  else showStatus("平局！");
 }
 
 function stand() {
   if (!gameStarted) return;
+
   const imgList = gameArea.querySelectorAll("img");
   if (imgList[3]) imgList[3].src = dealerHiddenCard;
   dealerCards[1] = dealerHiddenCard;
+
   setTimeout(() => dealDealerCardsSequentially(), 600);
 }
 
-
-// ✅ 确保函数在全局作用域可访问（用于按钮 onclick）
+// ✅ 全局绑定函数供按钮调用
 window.startGame = startGame;
 window.hitCard = hitCard;
 window.stand = stand;
 
-console.log("✅ Blackjack script v6 loaded");
+console.log("✅ script.js loaded.");
