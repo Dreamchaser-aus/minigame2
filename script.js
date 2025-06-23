@@ -138,14 +138,15 @@ function animateCard(card, areaId, index) {
   img.style.position = 'absolute';
   img.style.left = '50%';
   img.style.top = '50%';
-  img.style.transform = 'translate(-50%, -50%) scale(0.8)';
+  const angle = (Math.random() * 10 - 5).toFixed(2);
+  img.style.transform = `translate(-50%, -50%) scale(0.8) rotate(${angle}deg)`;
   container.appendChild(img);
   setTimeout(() => {
-    img.style.transition = 'all 0.4s ease';
+    img.style.transition = 'all 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
     img.style.opacity = 1;
     img.style.position = '';
     img.style.left = '';
     img.style.top = '';
-    img.style.transform = 'translateY(0) scale(1)';
+    img.style.transform = 'translateY(0) scale(1) rotate(0deg)';
   }, 20);
 }
