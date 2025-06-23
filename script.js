@@ -31,12 +31,15 @@ function dealCard(hand, containerId) {
   const cardImg = document.createElement('img');
   cardImg.classList.add('card');
 
-  if (card.suit === 'hearts' || card.suit === 'diamonds') {
-    cardImg.src = `cards/${card.value}_of_${card.suit}.png`;
-  } else {
-    cardImg.src = `cards/${card.value}_of_${card.suit}.png`;
-  }
+  // Shorthand suit mapping
+  const suitMap = {
+    hearts: 'H',
+    diamonds: 'D',
+    clubs: 'C',
+    spades: 'S'
+  };
 
+  cardImg.src = `cards/${card.value}${suitMap[card.suit]}.png`;
   document.getElementById(containerId).appendChild(cardImg);
   return card;
 }
@@ -50,8 +53,8 @@ function calculatePoints(hand, hideSecondCard = false) {
     if (['J', 'Q', 'K'].includes(card.value)) {
       total += 10;
     } else if (card.value === 'A') {
-      aces += 1;
       total += 11;
+      aces++;
     } else {
       total += parseInt(card.value);
     }
