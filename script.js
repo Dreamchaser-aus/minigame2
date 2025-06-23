@@ -144,3 +144,11 @@ function stand() {
   dealerCards[1] = dealerHiddenCard;
   setTimeout(() => dealDealerCardsSequentially(), 600);
 }
+
+
+// ✅ 确保函数在全局作用域可访问（用于按钮 onclick）
+window.startGame = startGame;
+window.hitCard = hitCard;
+window.stand = stand;
+
+console.log("✅ Blackjack script v6 loaded");
