@@ -2,77 +2,86 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Blackjack 房间</title>
   <style>
     body {
       margin: 0;
-      background-image: url('table.jpg');
+      background: url('table.jpg') no-repeat center center;
       background-size: cover;
-      background-position: center;
-      font-family: Arial, sans-serif;
-      color: white;
+      font-family: 'Segoe UI', sans-serif;
     }
-
-    #game-area {
-      position: relative;
-      width: 100%;
-      height: 70vh;
-      overflow: hidden;
-    }
-
     .card {
       width: 80px;
-      position: absolute;
-      transition: all 0.6s ease;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-      padding: 2px;
-      transform: scale(0.2);
-      opacity: 0;
+      height: auto;
+      transition: all 0.6s ease-out;
     }
-
     .controls {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
       text-align: center;
-      margin-top: 20px;
     }
-
-    .controls button {
+    button {
+      margin: 5px;
       padding: 10px 20px;
       font-size: 16px;
-      margin: 5px;
+      border-radius: 8px;
       border: none;
-      border-radius: 6px;
-      background-color: #00b894;
+      background-color: #1abc9c;
       color: white;
       cursor: pointer;
     }
-
-    .controls button:hover {
-      background-color: #019875;
-    }
-
     #status {
+      position: absolute;
+      bottom: 40px;
+      width: 100%;
       text-align: center;
-      font-size: 20px;
-      margin-top: 15px;
+      color: white;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <h2 style="text-align:center; padding: 10px; background-color: rgba(0,0,0,0.5);">♣ 进入房间 1</h2>
 
+  <!-- 返回主页按钮 -->
+  <a href="index.html" style="
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: white;
+    text-decoration: none;
+    background: rgba(0,0,0,0.5);
+    padding: 6px 10px;
+    border-radius: 6px;
+    z-index: 10;
+  ">⬅ 返回首页</a>
+
+  <!-- 游戏区 -->
   <div id="game-area"></div>
 
+  <!-- 点数显示 -->
+  <div style="
+    position: absolute;
+    bottom: 100px;
+    left: 10px;
+    color: white;
+    font-weight: bold;
+  ">
+    <div id="player-points">玩家点数: 0</div>
+    <div id="dealer-points">庄家点数: ?</div>
+  </div>
+
+  <!-- 控制按钮 -->
   <div class="controls">
     <button onclick="startGame()">开始发牌</button>
-    <button onclick="hitCard()">🎴 要牌</button>
+    <button onclick="hitCard()">🃏 要牌</button>
     <button onclick="stand()">✋ 停牌</button>
   </div>
 
+  <!-- 状态提示 -->
   <div id="status">点击「开始发牌」开始游戏</div>
 
+  <!-- 脚本 -->
   <script src="script.js" defer></script>
 </body>
 </html>
