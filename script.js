@@ -34,6 +34,7 @@ function calculatePoints(cards) {
   let total = 0;
   let aceCount = 0;
   cards.forEach(card => {
+    if (card === "hidden") return; // 跳过隐藏牌
     const val = getCardValue(card);
     total += val;
     if (val === 11) aceCount++;
@@ -69,7 +70,7 @@ function renderCards() {
 
   dealerCards.forEach((card, i) => {
     const img = document.createElement("img");
-    img.src = card === "hidden" ? "cards/back.png" : card;
+    img.src = (card === "hidden") ? "cards/back.png" : card;
     img.className = "card";
     img.style.left = `${100 + i * 90}px`;
     img.style.top = `15%`;
@@ -87,11 +88,10 @@ function startGame() {
   shuffleDeck();
   playerCards = [];
   dealerCards = [];
-  dealerHiddenCard = drawCard(); // 第二张庄家牌，先隐藏
-
+  dealerHiddenCard = drawCard(); // 真正的第二张庄家牌
   gameStarted = true;
 
-  // 动画发牌：玩家1张 ➜ 庄家1张 ➜ 玩家2张 ➜ 庄家盖牌
+  // 动画依次发牌：玩家1张 -> 庄家1张 -> 玩家2张 -> 庄家盖牌
   playerCards.push(drawCard());
   renderCards();
 
@@ -124,10 +124,9 @@ function hitCard() {
 function stand() {
   if (!gameStarted) return;
 
-  // 翻开庄家第二张牌
+  // 揭开庄家第二张盖牌
   dealerCards[1] = dealerHiddenCard;
 
-  // 庄家补牌直到17点以上
   while (calculatePoints(dealerCards) < 17) {
     dealerCards.push(drawCard());
   }
