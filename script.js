@@ -165,22 +165,13 @@ function updateStatus(msg) {
   document.getElementById('status').textContent = msg;
 }
 
-// 动画及庄家第二张牌翻面
 function animateCard(card, areaId, index) {
   const container = document.getElementById(areaId);
-  const wrapper = document.createElement('div');
-  wrapper.className = 'card';
-  // 动画初始：居中
-  wrapper.style.position = 'absolute';
-  wrapper.style.left = '50%';
-  wrapper.style.top = '50%';
-  wrapper.style.transform = 'translate(-50%, -50%) scale(0.8)';
-  wrapper.style.opacity = 0;
-  wrapper.style.transition = 'all 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
-
   if (areaId === 'dealer-area' && index === 1 && !playerStands) {
-    wrapper.classList.add('flip');
-    wrapper.setAttribute('data-card', `${card.value}${card.suit}`);
+    // 翻牌处理
+    const wrapper = document.createElement('div');
+    wrapper.className = 'card flip';
+    wrapper.style.display = "inline-block";
     const back = document.createElement('img');
     back.className = 'back';
     back.src = 'cards/back.png';
@@ -189,23 +180,23 @@ function animateCard(card, areaId, index) {
     front.src = `cards/${card.value}${card.suit}.png`;
     wrapper.appendChild(back);
     wrapper.appendChild(front);
+    container.appendChild(wrapper);
+    setTimeout(() => { wrapper.style.opacity = 1; }, 50);
   } else {
+    // 普通牌直接加img
     const img = document.createElement('img');
     img.className = 'card';
     const cardName = card.suit === 'back' ? 'back' : `${card.value}${card.suit}`;
     img.src = `cards/${cardName}.png`;
-    wrapper.appendChild(img);
+    img.style.opacity = 0;
+    img.style.transform = 'scale(0.8)';
+    img.style.transition = 'all 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+    container.appendChild(img);
+    setTimeout(() => {
+      img.style.opacity = 1;
+      img.style.transform = 'scale(1)';
+    }, 20);
   }
-  container.appendChild(wrapper);
-
-  setTimeout(() => {
-    // 动画完毕后恢复默认流布局
-    wrapper.style.position = '';
-    wrapper.style.left = '';
-    wrapper.style.top = '';
-    wrapper.style.opacity = 1;
-    wrapper.style.transform = 'translateY(0) scale(1)';
-  }, 50);
 }
 
 // 页面初始显示金币
