@@ -170,6 +170,7 @@ function animateCard(card, areaId, index) {
   const container = document.getElementById(areaId);
   const wrapper = document.createElement('div');
   wrapper.className = 'card';
+  // 动画初始：居中
   wrapper.style.position = 'absolute';
   wrapper.style.left = '50%';
   wrapper.style.top = '50%';
@@ -198,6 +199,7 @@ function animateCard(card, areaId, index) {
   container.appendChild(wrapper);
 
   setTimeout(() => {
+    // 动画完毕后恢复默认流布局
     wrapper.style.position = '';
     wrapper.style.left = '';
     wrapper.style.top = '';
