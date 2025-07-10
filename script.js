@@ -2,10 +2,16 @@ let deck = [];
 let playerHand = [];
 let dealerHand = [];
 let playerStands = false;
-let gameActive = false; // 新增，控制是否可重新发牌
+let gameActive = false;
+let coins = 1000;         // 玩家金币余额
+let currentBet = 0;       // 当前下注金额
 
 const suits = ['H', 'D', 'C', 'S'];
 const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+
+function updateCoins() {
+  document.getElementById('coins').innerText = coins;
+}
 
 function createDeck() {
   deck = [];
@@ -29,8 +35,21 @@ function startGame() {
     alert("请等待本局结束后再开始新游戏！");
     return;
   }
+  const bet = parseInt(document.getElementById('bet-amount').value, 10);
+  if (isNaN(bet) || bet <= 0) {
+    alert("请输入有效的下注金额！");
+    return;
+  }
+  if (bet > coins) {
+    alert("余额不足，无法下注！");
+    return;
+  }
+  currentBet = bet;
+  coins -= bet;
+  updateCoins();
+
   gameActive = true;
-  document.getElementById('start-btn').disabled = true; // 禁用按钮
+  document.getElementById('start-btn').disabled = true;
 
   clearBoard();
   createDeck();
@@ -48,8 +67,8 @@ function clearBoard() {
 }
 
 function updatePoints() {
-  document.getElementById('player-points').textContent = `玩家点数: ${calculatePoints(playerHand)}`;
-  document.getElementById('dealer-points').textContent = playerStands ? `庄家点数: ${calculatePoints(dealerHand)}` : '庄家点数: ?';
+  document.getElementById('player-points').textContent = calculatePoints(playerHand);
+  document.getElementById('dealer-points').textContent = playerStands ? calculatePoints(dealerHand) : '?';
 }
 
 function dealInitialCards() {
@@ -61,7 +80,7 @@ function dealInitialCards() {
 }
 
 function hitCard() {
-  if (playerStands) return;
+  if (!gameActive || playerStands) return;
   const card = deck.pop();
   playerHand.push(card);
   animateCard(card, 'player-area', playerHand.length - 1);
@@ -72,14 +91,13 @@ function hitCard() {
 }
 
 function stand() {
+  if (!gameActive || playerStands) return;
   playerStands = true;
-
   const dealerArea = document.getElementById('dealer-area');
   const secondCard = dealerArea.children[1];
   if (secondCard && secondCard.classList.contains('flip')) {
     secondCard.classList.add('flipped');
   }
-
   dealerPlay();
 }
 
@@ -107,15 +125,20 @@ function endGame() {
     result = '你爆了，庄家获胜！';
   } else if (dealerScore > 21 || playerScore > dealerScore) {
     result = '你赢了！';
+    coins += currentBet * 2;
   } else if (playerScore < dealerScore) {
     result = '庄家赢了。';
+    // coins 不变，已扣除下注
   } else {
     result = '平局！';
+    coins += currentBet; // 返还下注
   }
   updateStatus(result);
   updatePoints();
-  gameActive = false; // 游戏结束，允许重新开局
-  document.getElementById('start-btn').disabled = false; // 解除禁用
+  updateCoins();
+  gameActive = false;
+  document.getElementById('start-btn').disabled = false;
+  currentBet = 0;
 }
 
 function calculatePoints(hand) {
@@ -142,28 +165,11 @@ function updateStatus(msg) {
   document.getElementById('status').textContent = msg;
 }
 
-// 预加载所有卡牌图片
-function preloadCards() {
-  const suits = ['H', 'D', 'C', 'S'];
-  const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-  for (let suit of suits) {
-    for (let value of values) {
-      const img = new Image();
-      img.src = `cards/${value}${suit}.png`;
-    }
-  }
-  const back = new Image();
-  back.src = 'cards/back.png';
-}
-window.onload = preloadCards;
-
 // 动画及庄家第二张牌翻面
 function animateCard(card, areaId, index) {
   const container = document.getElementById(areaId);
   const wrapper = document.createElement('div');
   wrapper.className = 'card';
-
-  // 发牌动画初始位置从中间
   wrapper.style.position = 'absolute';
   wrapper.style.left = '50%';
   wrapper.style.top = '50%';
@@ -171,19 +177,15 @@ function animateCard(card, areaId, index) {
   wrapper.style.opacity = 0;
   wrapper.style.transition = 'all 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
 
-  // 庄家第2张牌翻牌处理
   if (areaId === 'dealer-area' && index === 1 && !playerStands) {
     wrapper.classList.add('flip');
     wrapper.setAttribute('data-card', `${card.value}${card.suit}`);
-
     const back = document.createElement('img');
     back.className = 'back';
     back.src = 'cards/back.png';
-
     const front = document.createElement('img');
     front.className = 'front';
     front.src = `cards/${card.value}${card.suit}.png`;
-
     wrapper.appendChild(back);
     wrapper.appendChild(front);
   } else {
@@ -193,7 +195,6 @@ function animateCard(card, areaId, index) {
     img.src = `cards/${cardName}.png`;
     wrapper.appendChild(img);
   }
-
   container.appendChild(wrapper);
 
   setTimeout(() => {
@@ -205,15 +206,7 @@ function animateCard(card, areaId, index) {
   }, 50);
 }
 
-// 翻转庄家第2张牌
-function stand() {
-  playerStands = true;
-
-  const dealerArea = document.getElementById('dealer-area');
-  const secondCard = dealerArea.children[1];
-  if (secondCard && secondCard.classList.contains('flip')) {
-    secondCard.classList.add('flipped');
-  }
-
-  dealerPlay();
-}
+// 页面初始显示金币
+window.onload = function() {
+  updateCoins();
+};
