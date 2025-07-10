@@ -167,23 +167,27 @@ function updateStatus(msg) {
 
 function animateCard(card, areaId, index) {
   const container = document.getElementById(areaId);
+
+  // 如果需要特殊翻牌，可以加div，否则所有牌都只append img
   if (areaId === 'dealer-area' && index === 1 && !playerStands) {
-    // 翻牌处理
+    // 翻牌动画（如果你实现了）
     const wrapper = document.createElement('div');
-    wrapper.className = 'card flip';
-    wrapper.style.display = "inline-block";
+    wrapper.className = 'flip-card';
+    wrapper.style.display = 'inline-block';
+
     const back = document.createElement('img');
-    back.className = 'back';
+    back.className = 'card back';
     back.src = 'cards/back.png';
+
     const front = document.createElement('img');
-    front.className = 'front';
+    front.className = 'card front';
     front.src = `cards/${card.value}${card.suit}.png`;
+
     wrapper.appendChild(back);
     wrapper.appendChild(front);
     container.appendChild(wrapper);
-    setTimeout(() => { wrapper.style.opacity = 1; }, 50);
   } else {
-    // 普通牌直接加img
+    // 普通卡牌
     const img = document.createElement('img');
     img.className = 'card';
     const cardName = card.suit === 'back' ? 'back' : `${card.value}${card.suit}`;
