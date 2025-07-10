@@ -30,6 +30,7 @@ function startGame() {
     return;
   }
   gameActive = true;
+  document.getElementById('start-btn').disabled = true; // 禁用按钮
 
   clearBoard();
   createDeck();
@@ -114,6 +115,7 @@ function endGame() {
   updateStatus(result);
   updatePoints();
   gameActive = false; // 游戏结束，允许重新开局
+  document.getElementById('start-btn').disabled = false; // 解除禁用
 }
 
 function calculatePoints(hand) {
