@@ -1,8 +1,8 @@
-
 let deck = [];
 let playerHand = [];
 let dealerHand = [];
 let playerStands = false;
+let gameActive = false; // 新增，控制是否可重新发牌
 
 const suits = ['H', 'D', 'C', 'S'];
 const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
@@ -25,6 +25,12 @@ function shuffle(array) {
 }
 
 function startGame() {
+  if (gameActive) {
+    alert("请等待本局结束后再开始新游戏！");
+    return;
+  }
+  gameActive = true;
+
   clearBoard();
   createDeck();
   playerHand = [deck.pop(), deck.pop()];
@@ -66,8 +72,13 @@ function hitCard() {
 
 function stand() {
   playerStands = true;
-  document.getElementById('dealer-area').lastChild.remove(); // 移除背面牌
-  animateCard(dealerHand[1], 'dealer-area', 1);
+
+  const dealerArea = document.getElementById('dealer-area');
+  const secondCard = dealerArea.children[1];
+  if (secondCard && secondCard.classList.contains('flip')) {
+    secondCard.classList.add('flipped');
+  }
+
   dealerPlay();
 }
 
@@ -102,6 +113,7 @@ function endGame() {
   }
   updateStatus(result);
   updatePoints();
+  gameActive = false; // 游戏结束，允许重新开局
 }
 
 function calculatePoints(hand) {
@@ -128,31 +140,7 @@ function updateStatus(msg) {
   document.getElementById('status').textContent = msg;
 }
 
-function animateCard(card, areaId, index) {
-  const container = document.getElementById(areaId);
-  const img = document.createElement('img');
-  img.className = 'card';
-  const cardName = card.suit === 'back' ? 'back' : `${card.value}${card.suit}`;
-  img.src = `cards/${cardName}.png`;
-  img.style.opacity = 0;
-  img.style.position = 'absolute';
-  img.style.left = '50%';
-  img.style.top = '50%';
-  const angle = (Math.random() * 10 - 5).toFixed(2);
-  img.style.transform = `translate(-50%, -50%) scale(0.8) rotate(${angle}deg)`;
-  container.appendChild(img);
-  setTimeout(() => {
-    img.style.transition = 'all 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
-    img.style.opacity = 1;
-    img.style.position = '';
-    img.style.left = '';
-    img.style.top = '';
-    img.style.transform = 'translateY(0) scale(1) rotate(0deg)';
-  }, 20);
-}
-
-
-// ✅ 预加载所有卡牌图片，提升首次发牌流畅度
+// 预加载所有卡牌图片
 function preloadCards() {
   const suits = ['H', 'D', 'C', 'S'];
   const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
@@ -167,8 +155,7 @@ function preloadCards() {
 }
 window.onload = preloadCards;
 
-
-// 替换 animateCard 实现庄家第二张牌翻面
+// 动画及庄家第二张牌翻面
 function animateCard(card, areaId, index) {
   const container = document.getElementById(areaId);
   const wrapper = document.createElement('div');
